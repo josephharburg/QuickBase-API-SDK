@@ -17,7 +17,7 @@ https://developer.quickbase.com/
   var $realm = ''; //Quickbase realm string before .quickbase.com
   var $user_agent = ''; //User agent
 
-	public function __construct($user_token='', $app_token = '', $realm = '', $user_agent, $access_token) {
+	public function __construct($user_token='', $app_token = '', $realm = '', $user_agent = '', $access_token = '') {
 		if($app_token) $this->app_token = $app_token;
 
     if($user_token) $this->user_token = $user_token;
@@ -77,36 +77,122 @@ https://developer.quickbase.com/
   $this->set_access_token($token);
   }
 
+  /**
+  * Method to make the request to QuickBase API
+  *
+  * @param string $endpoint
+  * @param string $body
+  *
+  * @return mixed $response
+  */
+
 
   //See https://developer.quickbase.com/ for actions and endpoints
-  private function make_api_call($endpoint, $body){
+  private function make_api_request($type_of_call = 'GET', $endpoint = '', $body = ''){
     $url = $this->base_url . $endpoint;
-    $token_header = ($this->get_access_token() !== '') ? "QB-TEMP-TOKEN:". $this->get_access_token() :  "QB-USER-TOKEN:" . $this->user_token;
+    $header_token = ($this->get_access_token() !== '') ? "QB-TEMP-TOKEN:". $this->get_access_token() :  "QB-USER-TOKEN:" . $this->user_token;
     $headers = array(
     "QB-Realm-Hostname: $this->realm",
     "User-Agent: QuickBaseRestApiApp",
-	  $token_header,
+	  $header_token,
     "Content-Type: application/json",
   );
     $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    if($type_of_call == 'POST') {
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    }
 
     $response = curl_exec($ch);
-    //This catches errors with the curl request and logs them. Change the executable code to fit your error logging procedures
+
+    //This catches errors with the cURL request and logs them. Change the executable code to fit your error logging procedures
     if(curl_errno($ch)){
       error_log("There was an error with the QuickBaseRestApi call/n". "The Error Code recieved was: ".curl_errno($ch));
     }
     return $response;
   }
 
+  /*--------------------------------------------
+                    TABLE METHODS
+  ---------------------------------------------*/
+
+  /**
+  * Get a table from your app
+  *
+  * @see https://developer.quickbase.com/operation/getTable
+  *
+  * @param string $table_id
+  * @param string $app_id
+  *
+  * @return mixed $response
+  */
+
+  public function get_a_table($table_id = '', $app_id = ''){
+    $url = "/tables/$table_id?appId=$app_id";
+    $result = $this->make_api_request("GET", $url);
+    return $result;
+  }
+
+  /**
+  * Method to update a table
+  *
+  * @see https://developer.quickbase.com/operation/updateTable
+  *
+  * @param string $table_id
+  * @param string $app_id
+  *
+  * @return mixed $response
+  */
+
+  public function update_a_table($table_id= '', $app_id = '', $changes = ''){
+    $url = "/tables/$table_id?appId=$app_id";
+    $result = $this->make_api_request("POST", $url, $changes);
+    return $result;
+  }
+
+
+    /*--------------------------------------------
+                      Record METHODS
+    ---------------------------------------------*/
+
+    /**
+    * Make a query for record data
+    *
+    * @see https://developer.quickbase.com/operation/runQuery
+    *
+    * @param string $table_id
+    * @param string $app_id
+    *
+    * @return mixed $response
+    */
+
+    public function query_for_data($table_id = '', $field_ids= array(), $where= '',$sort_by = array(), $group_by = array(), $options ){
+      $url = "/records/query";
+      $select = "select: [". implode(',',$field_ids) ."],";
+      if($where) $where = "{$where},";
+      if($sort_by) $sort_by = "[sortBY". implode(',',$sort_by) ."],";
+      $body = "{
+        'from': $table_id,
+        $select
+        $where
+        $sort_by
+
+
+
+      }";
+      $result = $this->make_api_request("GET", $url, $body);
+      return $result;
+    }
+
+
+
+
 	/* API_Authenticate: http://www.quickbase.com/api-guide/index.html#authenticate.html */
 	public function authenticates() {
-
 		if($this->xml) {
 			$xml_packet = new SimpleXMLElement('<qdbapi></qdbapi>');
 			$xml_packet->addChild('username',$this->user_name);
