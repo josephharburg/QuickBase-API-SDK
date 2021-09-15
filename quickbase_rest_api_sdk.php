@@ -144,6 +144,7 @@ https://developer.quickbase.com/
   *
   * @param string $table_id
   * @param string $app_id
+  * @param string $changes please see the documentation link above to create the body for the request
   *
   * @return mixed $response
   */
@@ -156,7 +157,7 @@ https://developer.quickbase.com/
 
 
     /*--------------------------------------------
-                      Record METHODS
+                      RECORD METHODS
     ---------------------------------------------*/
 
     /**
@@ -164,57 +165,99 @@ https://developer.quickbase.com/
     *
     * @see https://developer.quickbase.com/operation/runQuery
     *
-    * @param string $table_id
-    * @param string $app_id
+    * @param string $table_id The table to query. Required
+    * @param array  $select Array of field ids. Required
+    * @param string $where A Quickbase query language formatted bracket enclosed string see documentation link above. Required
+    *   $where = {3.CT.'string'}
+    * @param array $sort_by A multidimensional array correctly formatted see below. See documentation link above. Optional
+    *    $sort_by = array(
+    *       array(
+    *         "fieldId" => "field id", (int|string) The Field Id To Sort
+    *         "order" => "ASC|DESC" (string) which order
+    *       ) ...add as many sorting parameters as you wish
+    *     )
     *
-    * @return mixed $response
+    * @param array $group_by A multidimensional array correctly formatted. See documentation link above. Optional
+    *    $group_by = array(
+    *       array(
+    *         "fieldId" => "field id", (int|string) The field id to group. Required
+    *         "grouping" => "ASC|DESC|equal values" (string) which grouping. Required
+    *       )
+    *     )
+    *
+    * @param array $options An array of options. See documentation link above. Optional
+    *    $options = array(
+    *         "skip" => "number", (int) Number of records to skip. Optional
+    *         "compareWithAppLocalTime", => "true" (bool) See documentation. Optional
+    *         "top" => "number" (bool) Number of records to display. Optional
+    *     )
+    *
+    *
+    * @return mixed $result
     */
 
-    public function query_for_data($table_id = '', $field_ids= array(), $where= '',$sort_by = array(), $group_by = array(), $options ){
+    public function query_for_data($table_id, $select, $where, $sort_by, $group_by, $options){
       $url = "/records/query";
-      $select = "select: [". implode(',',$field_ids) ."],";
-      if($where) $where = "{$where},";
-      if($sort_by) $sort_by = "[sortBY". implode(',',$sort_by) ."],";
+      $select = json_encode( $select );
+      $where = ($where) ? $where: '""';
+      $sort_by = ($sort_by) ? json_encode( $sort_by ): "[{}]";
+      $group_by = ($group_by) ? json_encode( $group_by ): "[{}]";
+      $options = ($options) ? json_encode( $options ): "{}";
       $body = "{
         'from': $table_id,
-        $select
-        $where
-        $sort_by
-
-
-
+        'select': $select,
+        'where' : $where,
+        'sortBy': $sort_by,
+        'groupBy': $group_by,
+        'options': $options,
       }";
       $result = $this->make_api_request("GET", $url, $body);
+      return $result;
+    }
+
+    /**
+    * Update record(s)
+    *
+    * @see https://developer.quickbase.com/operation/runQuery
+    *
+    * @param string $table_id
+    * @param array $values_to_update a multidimensional array see below for schema or see SDK documentation
+    *     $values_to_update = array(
+    *       array(
+    *           "table primary key field id" (int|string) table primary key field id in quotes. Required => array("value" => (int|string) primary key id. Required),
+    *           "field id" (int|string) field id value in quotes => array("value" => (int|string) value for field),
+    *           "field id" (int|string) field id value in quotes => array("value" => (int|string) value for field),
+    *            ... put as may key value pairs that you need
+    *        ),
+    *       array(
+    *           "table primary key field id" (int|string) => array("value" => (int|string) another record primary key id),
+    *           "field id" (int|string) field id value in quotes => array("value" => (int|string) value for field),
+    *           "field id" (int|string) field id value in quotes => array("value" => (int|string) value for field),
+    *        ),
+    *        ... put as many records as you need
+    *     );
+    * @param string $fields_to_return A comma seperated list of field ids to return after update
+    *
+    * @return mixed $result
+    */
+
+    public function update_records($table_id = '', $values_to_update, $fields_to_return){
+      $url = "/records";
+      $data = json_encode( $values_to_update );
+      $body = "{
+        'to': $table_id,
+        'data': $data,
+        'fieldsToReturn': '[$fields_to_return]'
+      }";
+      $result = $this->make_api_request("POST", $url, $body);
       return $result;
     }
 
 
 
 
-	/* API_Authenticate: http://www.quickbase.com/api-guide/index.html#authenticate.html */
-	public function authenticates() {
-		if($this->xml) {
-			$xml_packet = new SimpleXMLElement('<qdbapi></qdbapi>');
-			$xml_packet->addChild('username',$this->user_name);
-			$xml_packet->addChild('password',$this->passwd);
-			if ($this->ticketHours)
-				$xml_packet->addChild('hours',$this->ticketHours);
 
-            // this doesn't get called when used in usertoken mode
-			$xml_packet->addChild('ticket',$this->ticket);
-			$xml_packet = $xml_packet->asXML();
-			$response = $this->transmit($xml_packet, 'API_Authenticate', $this->qb_ssl."main");
-		}
-		else {
-			$url_string = $this->qb_ssl . "main?act=API_Authenticate&username=" . $this->user_name ."&password=" . $this->passwd;
-			$response = $this->transmit($url_string);
-		}
-		if($response) {
-			$this->ticket = $response->ticket;
-			$this->user_id = $response->userid;
-		}
-	}
-	/* API_AddField: http://www.quickbase.com/api-guide/index.html#add_field.html */
+
 	public function add_field ($field_name, $type) {
 		if($this->xml) {
 			$xml_packet = new SimpleXMLElement('<qdbapi></qdbapi>');
