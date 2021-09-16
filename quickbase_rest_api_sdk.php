@@ -11,7 +11,7 @@
  // ini_set('display_errors', 'on'); // ini setting for turning on errors
  Class QuickBaseRestApi {
   var $user_token  = '';	// Valid user token
-  var $app_token = ''; //Valid app token
+  var $app_token = ''; //Valid app token. Required.
   private $access_token = ''; //Created with get_temporary_access_token method
 	public $base_url    = "https://api.quickbase.com/v1/"; //The current base url at the time.
   public $realm = ''; //Quickbase realm string before .quickbase.com
@@ -50,12 +50,12 @@
   }
 
   /**
-  * Method to get a temporary access token
+  * Method to get and set a temporary access token
   *
   * @param string $db_id The id of the database you want access to. Required.
   */
 
-  public function get_temporary_access_token($db_id){
+  public function get_and_set_temporary_access_token($db_id){
     $headers = array(
     "QB-Realm-Hostname: $this->realm",
     "User-Agent: QuickBaseRestApiApp",
