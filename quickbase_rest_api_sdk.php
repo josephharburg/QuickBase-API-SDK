@@ -215,7 +215,7 @@
   /**
   * Get all reports from a table
   *
-  * @see https://developer.quickbase.com/operation/getTable
+  * @see https://developer.quickbase.com/operation/getTableReports
   *
   * @param string $table_id Required.
   *
@@ -229,9 +229,9 @@
   }
 
   /**
-  * Get all reports from a table
+  * Get a single report
   *
-  * @see https://developer.quickbase.com/operation/getTable
+  * @see https://developer.quickbase.com/operation/getReport
   *
   * @param string $report_id Required.
   * @param string $table_id Required.
@@ -307,7 +307,7 @@
     /**
     * Update or create record(s)
     *
-    * @see https://developer.quickbase.com/operation/runQuery
+    * @see https://developer.quickbase.com/operation/upsert
     *
     * @param string $table_id
     * @param array $values_to_update a multidimensional array see below or see SDK documentation
