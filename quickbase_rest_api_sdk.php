@@ -2,9 +2,9 @@
  /*
  Title : QuickBase PHP Rest API SDK
  Author : Joseph Harburg (josephharburg@gmail.com)
- Description : The QuickBase PHP SDK is a simple class for interaction with the QuickBase REST API.
- The QuickBase API is well documented here:
-https://developer.quickbase.com/
+ Description : The QuickBase PHP SDK is a very simple class for basic interaction with the QuickBase REST API.
+ The QuickBase REST API is documented here:
+ https://developer.quickbase.com/
 
 */
 
@@ -27,7 +27,6 @@ https://developer.quickbase.com/
     if($user_agent) $this->user_token = $user_token;
 
     if($access_token) $this->access_token = $access_token;
-
 	}
 
   /**
@@ -42,7 +41,7 @@ https://developer.quickbase.com/
 
 
   /**
-  * Method to get the temporary access token
+  * Method to get the temporary access token of object instance
   *
   */
 
@@ -53,7 +52,7 @@ https://developer.quickbase.com/
   /**
   * Method to get a temporary access token
   *
-  * @param string $db_id The id of the table you want access to
+  * @param string $db_id The id of the database you want access to. Required.
   */
 
   public function get_temporary_access_token($db_id){
@@ -112,24 +111,45 @@ https://developer.quickbase.com/
 
     //This catches errors with the cURL request and logs them. Change the executable code to fit your error logging procedures
     if(curl_errno($ch)){
-      error_log("There was an error with the QuickBaseRestApi call/n". "The Error Code recieved was: ".curl_errno($ch));
+      error_log("There was an error with the QuickBaseRestApi call/n". "The HTTP Error Code recieved was: ".curl_errno($ch));
     }
     return $response;
   }
 
   /*--------------------------------------------
+                    APP METHODS
+  ---------------------------------------------*/
+  /**
+  * Get an app
+  *
+  * @see https://developer.quickbase.com/operation/getTable
+  *
+  * @param string $app_id Required.
+  *
+  * @return mixed $result
+  */
+
+  public function get_an_app($app_id = ''){
+    $endpoint = "/apps/$app_id";
+    $result = $this->make_api_request("GET", $endpoint);
+    return $result;
+  }
+
+
+
+
+  /*--------------------------------------------
                     TABLE METHODS
   ---------------------------------------------*/
-
   /**
   * Get a table from your app
   *
   * @see https://developer.quickbase.com/operation/getTable
   *
-  * @param string $table_id
-  * @param string $app_id
+  * @param string $table_id Required.
+  * @param string $app_id Required.
   *
-  * @return mixed $response
+  * @return mixed $result
   */
 
   public function get_a_table($table_id = '', $app_id = ''){
@@ -138,14 +158,14 @@ https://developer.quickbase.com/
     return $result;
   }
 
+
   /**
-  * Method to update a table
+  * Method to create a table
   *
-  * @see https://developer.quickbase.com/operation/updateTable
+  * @see https://developer.quickbase.com/operation/createTable
   *
-  * @param string $table_id
-  * @param string $app_id
-  * @param string $update_table_data See below and documentation link above.
+  * @param string $app_id Required.
+  * @param string $add_table_data See below and documentation link above.Required.
   *    $update_data = array(
   *     "name": "Table Name", (string)
   *     "description": "Table Description",(string)
@@ -153,13 +173,76 @@ https://developer.quickbase.com/
   *     "pluralRecordName": "Records"(string)
   *    );
   *
-  * @return mixed $response
+  * @return mixed $result
+  */
+
+  public function create_a_table($app_id = '', $add_table_data){
+    $endpoint = "/tables?appId=$app_id";
+    $body = json_encode( $add_table_data );
+    $result = $this->make_api_request("POST", $endpoint, $body);
+    return $result;
+  }
+
+
+  /**
+  * Method to update a table
+  *
+  * @see https://developer.quickbase.com/operation/updateTable
+  *
+  * @param string $table_id Required.
+  * @param string $app_id Required.
+  * @param string $update_table_data See below and documentation link above.Required.
+  *    $update_data = array(
+  *     "name": "Table Name", (string)
+  *     "description": "Table Description",(string)
+  *     "singleRecordName": "Record",(string)
+  *     "pluralRecordName": "Records"(string)
+  *    );
+  *
+  * @return mixed $result
   */
 
   public function update_a_table($table_id= '', $app_id = '', $update_table_data){
     $endpoint = "/tables/$table_id?appId=$app_id";
     $body = json_encode( $update_table_data );
     $result = $this->make_api_request("POST", $endpoint, $body);
+    return $result;
+  }
+
+  /*--------------------------------------------
+                    REPORT METHODS
+  ---------------------------------------------*/
+
+  /**
+  * Get all reports from a table
+  *
+  * @see https://developer.quickbase.com/operation/getTable
+  *
+  * @param string $table_id Required.
+  *
+  * @return mixed $result
+  */
+
+  public function get_reports_for_a_table($table_id){
+    $endpoint = "/reports?tableId=$table_id";
+    $result = $this->make_api_request("GET", $endpoint);
+    return $result;
+  }
+
+  /**
+  * Get all reports from a table
+  *
+  * @see https://developer.quickbase.com/operation/getTable
+  *
+  * @param string $report_id Required.
+  * @param string $table_id Required.
+  *
+  * @return mixed $result
+  */
+
+  public function get_single_report( $report_id ,$table_id ){
+    $endpoint = "/reports/$report_id?tableId=$table_id";
+    $result = $this->make_api_request("GET", $endpoint);
     return $result;
   }
 
@@ -264,33 +347,5 @@ https://developer.quickbase.com/
       $result = $this->make_api_request("POST", $endpoint, $body);
       return $result;
     }
-
-
-	/* API_RunImport http://www.quickbase.com/api-guide/index.html */
-	public function api_run_import($id) {
-		if($this->xml) {
-			$xml_packet = new SimpleXMLElement('<qdbapi></qdbapi>');
-			$xml_packet->addChild('id',$id);
-			if ($this->user_token)
-			{
-    			$xml_packet->addChild('usertoken',$this->user_token);
-			}
-			else
-			{
-    			$xml_packet->addChild('ticket',$this->ticket);
-			}
-
-			$xml_packet = $xml_packet->asXML();
-			$response = $this->transmit($xml_packet, 'API_RunImport');
-		}
-		else {
-			$url_string = $this->qb_ssl . $this->db_id.'?act=API_RunImport&ticket='. $this->ticket .'&id='. $id;
-			$response = $this->transmit($url_string);
-		}
-		if($response) {
-			return $response;
-		}
-		return false;
-	}
 }
 ?>
