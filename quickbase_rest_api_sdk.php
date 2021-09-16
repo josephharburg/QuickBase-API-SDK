@@ -1,8 +1,8 @@
 <?php
  /*
- Title : QuickBase PHP Rest API SDK
+ Title : QuickBase 2021 PHP REST API SDK
  Author : Joseph Harburg (josephharburg@gmail.com)
- Description : The QuickBase PHP SDK is a very simple class for basic interaction with the QuickBase REST API.
+ Description : The QuickBase PHP SDK is a class for very basic interaction with the QuickBase REST API in 2021.
  The QuickBase REST API is documented here:
  https://developer.quickbase.com/
 
@@ -10,11 +10,11 @@
 
  // ini_set('display_errors', 'on'); // ini setting for turning on errors
  Class QuickBaseRestApi {
-  var $user_token  = '';	// Valid user token
-  var $app_token = ''; //Valid app token. Required.
-  private $access_token = ''; //Created with get_temporary_access_token method
-	public $base_url    = "https://api.quickbase.com/v1/"; //The current base url at the time.
-  public $realm = ''; //Quickbase realm string before .quickbase.com
+  public $user_token  = '';	// Valid user token
+  public $app_token = ''; //Valid app token. Required.
+  private $access_token = ''; //Created with get_and_set_temporary_access_token method
+	public $base_url    = "https://api.quickbase.com/v1"; //The current base url
+  public $realm = ''; //Quickbase realm string BEFORE .quickbase.com
   public $user_agent = ''; //User agent
 
 	public function __construct($user_token='', $app_token = '', $realm = '', $user_agent = '', $access_token = '') {
@@ -38,7 +38,6 @@
   public function set_access_token($token){
     $this->$access_token = $token;
   }
-
 
   /**
   * Method to get the temporary access token of object instance
@@ -167,10 +166,10 @@
   * @param string $app_id Required.
   * @param string $add_table_data See below and documentation link above.Required.
   *    $update_data = array(
-  *     "name": "Table Name", (string)
-  *     "description": "Table Description",(string)
-  *     "singleRecordName": "Record",(string)
-  *     "pluralRecordName": "Records"(string)
+  *     "name": (string) Table name
+  *     "description": (string) Table Description
+  *     "singleRecordName": (string) Record name
+  *     "pluralRecordName": (string) Plural Record Name
   *    );
   *
   * @return mixed $result
@@ -193,10 +192,10 @@
   * @param string $app_id Required.
   * @param string $update_table_data See below and documentation link above.Required.
   *    $update_data = array(
-  *     "name": "Table Name", (string)
-  *     "description": "Table Description",(string)
-  *     "singleRecordName": "Record",(string)
-  *     "pluralRecordName": "Records"(string)
+  *     "name": (string) Table name
+  *     "description": (string) Table Description
+  *     "singleRecordName": (string) Record name
+  *     "pluralRecordName": (string) Plural Record Name
   *    );
   *
   * @return mixed $result
@@ -263,7 +262,7 @@
     * @param array $sort_by A multidimensional array correctly formatted see below. See documentation link above. Optional
     *    $sort_by = array(
     *       array(
-    *         "fieldId" => "field id", (int|string) The field id to sort by.
+    *         "fieldId" => (int|string) The field id to sort by.
     *         "order" => "ASC|DESC" (string) which order parameter.
     *       ) ...add as many sorting parameters as allowed
     *     )
@@ -271,16 +270,16 @@
     * @param array $group_by A multidimensional array correctly formatted. See documentation link above. Optional
     *    $group_by = array(
     *       array(
-    *         "fieldId" => "field id", (int|string) The field id to group. Required
+    *         "fieldId" => (int|string) The field id to group. Required
     *         "grouping" => "ASC|DESC|equal values" (string) which grouping. Required
     *       )
     *     )
     *
     * @param array $options An array of options. See documentation link above. Optional
     *    $options = array(
-    *         "skip" => "number", (int) Number of records to skip. Optional
-    *         "compareWithAppLocalTime", => "true" (bool) See documentation. Optional
-    *         "top" => "number" (bool) Number of records to display. Optional
+    *         "skip" => (int) Number of records to skip. Optional
+    *         "compareWithAppLocalTime", => (bool) See documentation. Optional
+    *         "top" => (bool) Number of records to display. Optional
     *     )
     *
     * @return mixed $result
