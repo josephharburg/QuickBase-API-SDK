@@ -89,13 +89,14 @@
   //See https://developer.quickbase.com/ for actions and endpoints
   private function make_api_request($type_of_request = 'GET', $endpoint = '', $body = ''){
     $url = $this->base_url . $endpoint;
-    $header_token = ($this->get_access_token()) ? "QB-TEMP-TOKEN:". $this->get_access_token() :  "QB-USER-TOKEN:" . $this->user_token;
+    $header_token = ($this->get_access_token()) ? "QB-TEMP-TOKEN ". $this->get_access_token() :  "QB-USER-TOKEN " . $this->user_token;
     $headers = array(
     "QB-Realm-Hostname: $this->realm",
-    "User-Agent: QuickBaseRestApiApp",
-	  $header_token,
+    "User-Agent: Openlight",
+	  "Authorization:". $header_token,
     "Content-Type: application/json",
   );
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -112,6 +113,7 @@
     if(curl_errno($ch)){
       error_log("There was an error with the QuickBaseRestApi call/n". "The HTTP Error Code recieved was: ".curl_errno($ch));
     }
+
     return $response;
   }
 
@@ -121,7 +123,7 @@
   /**
   * Get an app
   *
-  * @see https://developer.quickbase.com/operation/getTable
+  * @see https://developer.quickbase.com/operation/getApp
   *
   * @param string $app_id Required.
   *
@@ -285,21 +287,14 @@
     * @return mixed $result
     */
 
-    public function query_for_data($table_id, $select, $where, $sort_by, $group_by, $options){
+    public function query_for_data($table_id='', $select=array(), $where='', $sort_by = '', $group_by = '', $options = ''){
       $endpoint = "/records/query";
       $select = json_encode( $select );
       $where = ($where) ? $where: '""';
       $sort_by = ($sort_by) ? json_encode( $sort_by ): "[{}]";
       $group_by = ($group_by) ? json_encode( $group_by ): "[{}]";
-      $options = ($options) ? json_encode( $options ): "{}";
-      $body = "{
-        'from': $table_id,
-        'select': $select,
-        'where' : $where,
-        'sortBy': $sort_by,
-        'groupBy': $group_by,
-        'options': $options,
-      }";
+      $options = ($options) ? ',"options":'.json_encode( $options ): "";
+      $body = "{ \"from\": \"$table_id\",\"select\": $select,\"where\" : \"$where\",\"sortBy\": $sort_by,\"groupBy\": $group_by $options }";
       $result = $this->make_api_request("POST", $endpoint, $body);
       return $result;
     }
@@ -339,9 +334,9 @@
       $data = json_encode( $values_to_update );
       $fields_to_return = json_encode( $fields_to_return );
       $body = "{
-        'to': $table_id,
-        'data': $data,
-        'fieldsToReturn': $fields_to_return
+        \"to\": \"$table_id\",
+        \"data\": $data,
+        \"fieldsToReturn\": $fields_to_return
       }";
       $result = $this->make_api_request("POST", $endpoint, $body);
       return $result;
