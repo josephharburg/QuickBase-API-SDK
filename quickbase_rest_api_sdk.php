@@ -18,9 +18,9 @@
   public $user_agent = ''; //User agent
 
 	public function __construct($user_token='', $app_token = '', $realm = '', $user_agent = '', $access_token = '') {
-		if($app_token) $this->app_token = $app_token;
-
     if($user_token) $this->user_token = $user_token;
+
+    if($app_token) $this->app_token = $app_token;
 
     if($realm) $this->realm = $realm . '.quickbase.com';
 
@@ -92,7 +92,7 @@
     $header_token = ($this->get_access_token()) ? "QB-TEMP-TOKEN ". $this->get_access_token() :  "QB-USER-TOKEN " . $this->user_token;
     $headers = array(
     "QB-Realm-Hostname: $this->realm",
-    "User-Agent: Openlight",
+    "User-Agent: QuickBaseRestApiApp",
 	  "Authorization:". $header_token,
     "Content-Type: application/json",
   );
