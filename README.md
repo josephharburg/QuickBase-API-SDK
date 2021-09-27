@@ -1,8 +1,9 @@
-The QuickBase REST API Starter Development Kit
+The QuickBase REST API Starter Development Kit for PHP
+-------------------------------
 Description
 -------------------------------
-This is a simple class to be used to access the REST API that QuickBase offers.
-This starter development kit does not do all the work for you, however, it does give you a good leg up when trying to access the QuickBase REST API.
+This is a simple class to be used to access the REST API that QuickBase offers for PHP.
+This starter development kit does not do all the work for you, however, it does give you a good leg up when trying to access the QuickBase REST API in PHP.
 
 Known Limitations
 -------------------------------
@@ -26,4 +27,4 @@ Anyone who wants to use it!
 Can I contribute?
 -------------------------------
 Absolutely!
-Please feel free to submit a pull request and I will add you to the list of contributors if your code works and I implement it. I would request that you test your submission before making a pull request. 
+Please feel free to submit a pull request and I will add you to the list of contributors if your code works and I implement it. I would request that you test your submission before making a pull request.
