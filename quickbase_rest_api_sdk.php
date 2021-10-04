@@ -10,12 +10,12 @@
 
  // ini_set('display_errors', 'on'); // ini setting for turning on errors
  Class QuickBaseRestApi {
-  public $user_token  = '';	// Valid user token
-  public $app_token = ''; //Valid app token. Required.
+  public $user_token 	= '';	// Valid user token
+  public $app_token 	= ''; //Valid app token. Required.
   private $access_token = ''; //Created with get_and_set_temporary_access_token method
-	public $base_url    = "https://api.quickbase.com/v1"; //The current base url
-  public $realm = ''; //Quickbase realm string BEFORE .quickbase.com
-  public $user_agent = ''; //User agent
+  public $base_url    	= "https://api.quickbase.com/v1"; //The current base url
+  public $realm 	= ''; //Quickbase realm string BEFORE .quickbase.com
+  public $user_agent 	= ''; //User agent
 
 	public function __construct($user_token='', $app_token = '', $realm = '', $user_agent = '', $access_token = '') {
     if($user_token) $this->user_token = $user_token;
@@ -290,7 +290,7 @@
     public function query_for_data($table_id='', $select=array(), $where='', $sort_by = '', $group_by = '', $options = ''){
       $endpoint = "/records/query";
       $select = json_encode( $select );
-      $where = ($where) ? $where: '""';
+      $where = ($where) ? $where: '';
       $sort_by = ($sort_by) ? json_encode( $sort_by ): "[{}]";
       $group_by = ($group_by) ? json_encode( $group_by ): "[{}]";
       $options = ($options) ? ',"options":'.json_encode( $options ): "";
@@ -305,7 +305,7 @@
     * @see https://developer.quickbase.com/operation/upsert
     *
     * @param string $table_id
-    * @param array $values_to_update a multidimensional array see below or see SDK documentation
+    * @param array $values_to_update a multidimensional array see below
     *     $values_to_update = array(
     *       array(
     *          (string) table primary key field id in quotes. Required =>
