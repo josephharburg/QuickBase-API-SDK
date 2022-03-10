@@ -11,7 +11,7 @@ I have not included every single method the QuickBase REST API offers, just the 
 
 Using the Class Basics
 -------------------------------
-Simply just include or require this file into your project and instantiate a new class replacing the brackets with your own creditials: 
+Simply just include or require this file into your project and instantiate a new class replacing the brackets with your own credentials: 
 
 ```PHP 
 $QuickBaseAPI = new QuickBaseRestAPI({QUICKBASE_USER_TOKEN},{QUICKBASE_APP_TOKEN}, {QUICKBASE_REALM}, {USER_AGENT});
@@ -48,8 +48,10 @@ Bugs and Issues
 If you would like a feature added or have noticed a bug, please let me know in detail by submitting an issue.
 
 For bugs please let me know the following:  
-  Method Name: What method is not working .
+  Method Name: What method is not working.
+  
   Error description: What is the unexpected behavior you see when you use the method.
+  
   Error Log Info: Any error log information you have (if any)
 
 I unfortunately will not be able to give end user support (how to implement in your own project) or teach you how to code. That being said if you need help just message me. :)
