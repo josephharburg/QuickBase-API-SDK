@@ -12,26 +12,36 @@ I have not included every single method the QuickBase REST API offers, just the 
 Using the Class Basics
 -------------------------------
 Simply just include or require this file into your project and instantiate a new class replacing the brackets with your own creditials: 
+
+```PHP 
 $QuickBaseAPI = new QuickBaseRestAPI({QUICKBASE_USER_TOKEN},{QUICKBASE_APP_TOKEN}, {QUICKBASE_REALM}, {USER_AGENT});
+```
 
 Here is an example of making a simple query (replace X with field ids):
+
+```PHP 
 $request = $QuickBaseAPI->query_for_data(TABLE_NAME, array(X,XX) ,"{XX.AF.'08-06-2021'}AND{XX.XEX.'NULL'}");
 echo $request; 
+```
 
 Here is an example of updating or creating a record (replace X with field ids and PRIMARY KEY with primary key field id): 
-$records_to_update = array(
-  array(
-  PRIMARY KEY  => array("value" => RECORD ID),
-  "XX" => array( "value" => "Value to update"),
-  ),
-  array(
-  PRIMARY KEY  => array("value" => RECORD ID),
-  "XX" => array("value" => "Some other value to update"),
-  ),
+
+```PHP 
+  $records_to_update = array(
+    array(
+      PRIMARY KEY  => array("value" => RECORD ID),
+      "XX" => array( "value" => "Value to update"),
+    ),
+    array(
+      PRIMARY KEY  => array("value" => RECORD ID),
+      "XX" => array("value" => "Some other value to update"),
+    ),
 );
+
           
 $updateRequest = $QuickBaseAPI->update_or_create_records(TABLE_NAME, $records_to_update, array(RECORD ID,XX,XX,XX));
 echo $updateRequest;
+```
 
 Bugs and Issues
 -------------------------------
