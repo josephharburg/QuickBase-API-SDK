@@ -1,8 +1,8 @@
 <?php
  /*
- Title : QuickBase 2021 PHP REST API SDK
+ Title : QuickBase 2022 PHP REST API SDK
  Author : Joseph Harburg (josephharburg@gmail.com)
- Description : The QuickBase PHP SDK is a class for very basic interaction with the QuickBase REST API in 2021.
+ Description : The QuickBase PHP SDK is a class for very basic interaction with the QuickBase REST API in 2022.
  The QuickBase REST API is documented here:
  https://developer.quickbase.com/
 
