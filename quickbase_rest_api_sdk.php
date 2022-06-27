@@ -36,7 +36,7 @@
   */
 
   public function set_access_token($token){
-    $this->$access_token = $token;
+    $this->access_token = $token;
   }
 
   /**
