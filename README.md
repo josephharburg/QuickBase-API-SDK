@@ -5,9 +5,12 @@ Description
 This is a simple class to be used to access the REST API that QuickBase offers for PHP.
 This starter development kit does not do all the work for you, however, it does give you a good leg up when trying to access the QuickBase REST API in PHP.
 
+
 Known Limitations
 -------------------------------
 I have not included every single method the QuickBase REST API offers, just the basics. If you would like to have a method added please feel free to submit an issue with your request and I will get to it when I can.
+At this point in time a QuickBase App Token and a QuickBase User Token is required for this to work. 
+To my knowledge the temporary access token endpoint that QuickBase provides is strictly for use within the QuickBase application itself and does not allow for cross origin calls. 
 
 Using the Class Basics
 -------------------------------
