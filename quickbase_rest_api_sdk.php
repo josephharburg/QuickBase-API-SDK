@@ -45,7 +45,7 @@
   */
 
   public function get_access_token(){
-    return $this->$access_token;
+    return $this->access_token;
   }
 
   /**
@@ -58,7 +58,7 @@
     $headers = array(
     "QB-Realm-Hostname: $this->realm",
     "User-Agent: QuickBaseRestApiApp",
-	  "QB-App-Token: $this->app_token",
+    "QB-App-Token: $this->app_token",
     "Content-Type: application/json",
   );
 
