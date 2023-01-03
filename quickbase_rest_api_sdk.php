@@ -39,7 +39,7 @@
 
 
   //See https://developer.quickbase.com/ for actions and endpoints
-  private function make_api_request($type_of_request = 'GET', $endpoint = '', $body = ''){
+  private function make_api_request($type_of_request = 'GET', $endpoint, $body){
     $url = $this->base_url . $endpoint;
     $header_token = "QB-USER-TOKEN " . $this->user_token;
     $headers = array(
@@ -82,7 +82,7 @@
   * @return mixed $result
   */
 
-  public function get_an_app($app_id = ''){
+  public function get_an_app($app_id){
     $endpoint = "/apps/$app_id";
     $result = $this->make_api_request("GET", $endpoint);
     return $result;
@@ -105,7 +105,7 @@
   * @return mixed $result
   */
 
-  public function get_a_table($table_id = '', $app_id = ''){
+  public function get_a_table($table_id, $app_id){
     $endpoint = "/tables/$table_id?appId=$app_id";
     $result = $this->make_api_request("GET", $endpoint);
     return $result;
@@ -129,7 +129,7 @@
   * @return mixed $result
   */
 
-  public function create_a_table($app_id = '', $add_table_data){
+  public function create_a_table($app_id, $add_table_data){
     $endpoint = "/tables?appId=$app_id";
     $body = json_encode( $add_table_data );
     $result = $this->make_api_request("POST", $endpoint, $body);
@@ -155,7 +155,7 @@
   * @return mixed $result
   */
 
-  public function update_a_table($table_id= '', $app_id = '', $update_table_data){
+  public function update_a_table($table_id, $app_id, $update_table_data){
     $endpoint = "/tables/$table_id?appId=$app_id";
     $body = json_encode( $update_table_data );
     $result = $this->make_api_request("POST", $endpoint, $body);
@@ -239,7 +239,7 @@
     * @return mixed $result
     */
 
-    public function query_for_data($table_id='', $select=array(), $where='', $sort_by = '', $group_by = '', $options = ''){
+    public function query_for_data($table_id, $select, $where, $sort_by = '', $group_by = '', $options = ''){
       $endpoint = "/records/query";
       $select = json_encode( $select );
       $where = ($where) ? $where: '';
@@ -281,7 +281,7 @@
     * @return mixed $result
     */
 
-    public function update_or_create_records($table_id = '', $values_to_update, $fields_to_return = array(3)){
+    public function update_or_create_records($table_id, $values_to_update, $fields_to_return = array(3)){
       $endpoint = "/records";
       $data = json_encode( $values_to_update );
       $fields_to_return = json_encode( $fields_to_return );
